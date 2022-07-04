@@ -4,6 +4,7 @@ import { AnalyzeTexts } from '../model/analyze-texts.model';
 import { TypeInvoiceEnumeration } from '../model/enum/type-invoice.enum';
 import { InvoiceModel } from '../model/invoice.model';
 import { Line } from '../model/line.model';
+import { NotaFiscal } from '../model/nota-fiscal.model';
 import { OcrAnalyzeResponse } from '../model/ocr/ocr-analyze-response.model';
 import { OcrImageResponse } from '../model/ocr/ocr-image-response.model';
 import { asyncOcr, getAnalyzeResultsByOcr, syncOcr } from './client/ocr.client';
@@ -116,7 +117,7 @@ export class AppService {
       .pop();
 
     const invoiceStrategy = InvoiceStrategy[typeInvoice];
-    let invoice;
+    let invoice: NotaFiscal;
     if (invoiceStrategy) {
       invoice = await invoiceStrategy(readTexts);
     }
