@@ -9,10 +9,10 @@ const cvcService = async (readTexts: string[]): Promise<NotaFiscal> => {
     .setUf('SP');
 
   const fields = new Array<InvoiceField>(
-    new InvoiceField().setKey('formaPagamento').setRegexExp(new RegExp('(Pagamento :)', 'im')),
-    new InvoiceField().setKey('numeroNota').setRegexExp(new RegExp('Nº do contrato', 'im')),
-    new InvoiceField().setKey('dataEmissao').setRegexExp(new RegExp('(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})$')),
-    new InvoiceField().setKey('valorTotal').setRegexExp(new RegExp('(totalizam o valor de R\\$)', 'i')),
+    new InvoiceField().setKey('FORMAPAGAMENTO').setRegexExp(new RegExp('(Pagamento :)', 'im')),
+    new InvoiceField().setKey('NUMERONOTA').setRegexExp(new RegExp('Nº do contrato', 'im')),
+    new InvoiceField().setKey('DATAEMISSAO').setRegexExp(new RegExp('(\\d{1,2})\\/(\\d{1,2})\\/(\\d{4})$')),
+    new InvoiceField().setKey('VALORTOTAL').setRegexExp(new RegExp('(totalizam o valor de R\\$)', 'i')),
   );
 
   // let matchersMap = new Map<string, string[]>();
@@ -24,12 +24,12 @@ const cvcService = async (readTexts: string[]): Promise<NotaFiscal> => {
     fields.forEach((field) => {
       const pattern = field.regexExp;
       if (pattern.test(text.toUpperCase())) {
-        if (field.key.toUpperCase().includes('DATAEMISSAO')) {
+        if (field.key.includes('DATAEMISSAO')) {
           if (i == readTexts.length - 1 || i == readTexts.length) {
             const dataEmissao = pattern.exec(text)[0].concat(' 00:00:00');
             notaFiscal.setDataEmissao(dataEmissao);
           }
-        } else if (field.key.toUpperCase().includes('FORMAPAGAMENTO')) {
+        } else if (field.key.includes('FORMAPAGAMENTO')) {
           const nextLine = readTexts[i + 1];
           if (nextLine.toUpperCase().includes('CRÉDITO') || nextLine.toUpperCase().includes('DÉBITO')) {
             let formaPagamento = nextLine;
@@ -41,7 +41,7 @@ const cvcService = async (readTexts: string[]): Promise<NotaFiscal> => {
             }
             notaFiscal.setFormaPagamento(formaPagamento);
           }
-        } else if (field.key.toUpperCase().includes('VALORTOTAL')) {
+        } else if (field.key.includes('VALORTOTAL')) {
           if (text.includes('R$')) {
             text = text.split('R$')[1];
           }
@@ -49,7 +49,7 @@ const cvcService = async (readTexts: string[]): Promise<NotaFiscal> => {
           if (total && !total.startsWith('0')) {
             notaFiscal.setValorTotal(total);
           }
-        } else if (field.key.toUpperCase().includes('NUMERONOTA')) {
+        } else if (field.key.includes('NUMERONOTA')) {
           let numeroNota;
           const previousLine = readTexts[i - 1];
           const nextLine = readTexts[i + 1];
