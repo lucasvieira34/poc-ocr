@@ -19,6 +19,9 @@ const satService = async (readTexts: string[]): Promise<NotaFiscal> => {
     getCnpjFornecedorInvoiceField(),
     getDataEmissaoWithDateFormatInvoiceField(),
     getEnderecoInvoiceField(),
+    new InvoiceField()
+      .setKey('NUMERONOTA')
+      .setRegexExp(new RegExp('(\\W|^)(EXTRATO|EXTRATO NO.|EXTRATO Nº)(\\W|$)', 'i')),
   );
 
   for (let i = 0; i < readTexts.length; i++) {
@@ -44,6 +47,9 @@ const satService = async (readTexts: string[]): Promise<NotaFiscal> => {
           notaFiscal.setCnpj(cnpj);
         } else if (field.key.includes('ENDERECO')) {
           notaFiscal.setEndereco(text);
+        } else if (field.key.includes('NUMERONOTA')) {
+          const numeroNota = text.replace(/[^\d]/g, '').replace(/ /g, '');
+          if (!isNaN(+numeroNota)) notaFiscal.setNumeroNota(numeroNota);
         }
       }
     });

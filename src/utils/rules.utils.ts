@@ -69,7 +69,7 @@ export const getValorTotalByRegexWithSlip = (text: string): string => {
       }
       return valor;
     })
-    .filter((valor) => valor && typeof valor === 'number')
+    .filter((valor) => valor && !isNaN(+valor))
     .reverse()
     .pop();
 };
