@@ -13,3 +13,9 @@ export const getDataEmissaoWithDateFormatInvoiceField = () => {
 export const getCnpjFornecedorInvoiceField = () => {
   return new InvoiceField().setKey('CNPJ').setRegexExp(new RegExp('(\\W|^)(CNPJ)(\\W|$)', 'i'));
 };
+
+export const getEnderecoInvoiceField = () => {
+  return new InvoiceField()
+    .setKey('ENDERECO')
+    .setRegexExp(new RegExp('(\\W|^)(RUA|R\\.|AVENIDA|AV\\.|AVN|TRAVESSA|TRAV\\.)(\\W|$)', 'i'));
+};

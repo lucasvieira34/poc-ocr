@@ -4,6 +4,7 @@ import {
   getAccessKeyInvoiceField,
   getCnpjFornecedorInvoiceField,
   getDataEmissaoWithDateFormatInvoiceField,
+  getEnderecoInvoiceField,
 } from 'src/utils/pattern.utils';
 import { applyCNPJMatcherRules, applyDataEmissaoMatcherRules } from 'src/utils/rules.utils';
 
@@ -15,8 +16,9 @@ const satService = async (readTexts: string[]): Promise<NotaFiscal> => {
 
   const fields = new Array<InvoiceField>(
     getAccessKeyInvoiceField(),
-    getDataEmissaoWithDateFormatInvoiceField(),
     getCnpjFornecedorInvoiceField(),
+    getDataEmissaoWithDateFormatInvoiceField(),
+    getEnderecoInvoiceField(),
   );
 
   for (let i = 0; i < readTexts.length; i++) {
@@ -40,6 +42,8 @@ const satService = async (readTexts: string[]): Promise<NotaFiscal> => {
             cnpj = accessKey.substring(6, 20);
           }
           notaFiscal.setCnpj(cnpj);
+        } else if (field.key.includes('ENDERECO')) {
+          notaFiscal.setEndereco(text);
         }
       }
     });
