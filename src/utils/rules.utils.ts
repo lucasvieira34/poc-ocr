@@ -1,3 +1,22 @@
+export const applyDataEmissaoMatcherRules = (text: string): string => {
+  if (text.length === 16) {
+    text = text.concat(':00');
+  }
+  if (text.length != 19) {
+    return null;
+  }
+  return text;
+};
+
+export const applyCNPJMatcherRules = (text: string): string => {
+  text = text.replace(/[^\d]/g, '').replace(/ /g, '');
+  if (text.length >= 14) {
+    return text.substring(0, 14);
+  } else {
+    return null;
+  }
+};
+
 export const getValorTotal = (total: string, text: string): string => {
   if (!total) {
     total = getValorTotalByRegex(text);

@@ -9,3 +9,7 @@ export const getAccessKeyInvoiceField = () => {
 export const getDataEmissaoWithDateFormatInvoiceField = () => {
   return new InvoiceField().setKey('DATAEMISSAO').setRegexExp(new RegExp('(\\d{1,2}\\/\\d{1,2}\\/\\d{4})', 'g'));
 };
+
+export const getCnpjFornecedorInvoiceField = () => {
+  return new InvoiceField().setKey('CNPJ').setRegexExp(new RegExp('(\\W|^)(CNPJ)(\\W|$)', 'i'));
+};

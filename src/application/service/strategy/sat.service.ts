@@ -1,7 +1,11 @@
 import { InvoiceField } from 'src/application/model/invoice-field.model';
 import { NotaFiscal } from 'src/application/model/nota-fiscal.model';
-import { applyDataEmissaoMatcherRules } from 'src/utils/data.utils';
-import { getAccessKeyInvoiceField, getDataEmissaoWithDateFormatInvoiceField } from 'src/utils/invoice.utils';
+import {
+  getAccessKeyInvoiceField,
+  getCnpjFornecedorInvoiceField,
+  getDataEmissaoWithDateFormatInvoiceField,
+} from 'src/utils/pattern.utils';
+import { applyCNPJMatcherRules, applyDataEmissaoMatcherRules } from 'src/utils/rules.utils';
 
 const satService = async (readTexts: string[]): Promise<NotaFiscal> => {
   const notaFiscal = new NotaFiscal();
@@ -9,7 +13,11 @@ const satService = async (readTexts: string[]): Promise<NotaFiscal> => {
   let accessKey = getAccessKeyByFullText(readTexts);
   notaFiscal.setAccessKey(accessKey);
 
-  const fields = new Array<InvoiceField>(getDataEmissaoWithDateFormatInvoiceField());
+  const fields = new Array<InvoiceField>(
+    getAccessKeyInvoiceField(),
+    getDataEmissaoWithDateFormatInvoiceField(),
+    getCnpjFornecedorInvoiceField(),
+  );
 
   for (let i = 0; i < readTexts.length; i++) {
     const text = readTexts[i];
@@ -25,7 +33,13 @@ const satService = async (readTexts: string[]): Promise<NotaFiscal> => {
           }
         } else if (field.key.includes('DATAEMISSAO')) {
           const dataEmissao = applyDataEmissaoMatcherRules(text);
-          notaFiscal.setDataEmissao(dataEmissao);
+          if (dataEmissao) notaFiscal.setDataEmissao(dataEmissao);
+        } else if (field.key.includes('CNPJ')) {
+          let cnpj = applyCNPJMatcherRules(text);
+          if (!cnpj && accessKey) {
+            cnpj = accessKey.substring(6, 20);
+          }
+          notaFiscal.setCnpj(cnpj);
         }
       }
     });

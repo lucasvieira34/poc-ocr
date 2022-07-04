@@ -1,7 +1,7 @@
 import { InvoiceField } from 'src/application/model/invoice-field.model';
 import { NotaFiscal } from 'src/application/model/nota-fiscal.model';
-import { getDataEmissaoWithDateFormatInvoiceField } from 'src/utils/invoice.utils';
-import { getValorTotal } from 'src/utils/valor.utils';
+import { getDataEmissaoWithDateFormatInvoiceField } from 'src/utils/pattern.utils';
+import { getValorTotal } from 'src/utils/rules.utils';
 
 const cvcService = async (readTexts: string[]): Promise<NotaFiscal> => {
   const notaFiscal = new NotaFiscal()
