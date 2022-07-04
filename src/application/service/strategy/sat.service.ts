@@ -6,7 +6,11 @@ import {
   getDataEmissaoWithDateFormatInvoiceField,
   getEnderecoInvoiceField,
 } from 'src/utils/pattern.utils';
-import { applyCNPJMatcherRules, applyDataEmissaoMatcherRules } from 'src/utils/rules.utils';
+import {
+  applyCNPJMatcherRules,
+  applyDataEmissaoMatcherRules,
+  getValorTotalForNFCEOrSATOrECF,
+} from 'src/utils/rules.utils';
 
 const satService = async (readTexts: string[]): Promise<NotaFiscal> => {
   const notaFiscal = new NotaFiscal();
@@ -22,6 +26,9 @@ const satService = async (readTexts: string[]): Promise<NotaFiscal> => {
     new InvoiceField()
       .setKey('NUMERONOTA')
       .setRegexExp(new RegExp('(\\W|^)(EXTRATO|EXTRATO NO.|EXTRATO Nº)(\\W|$)', 'i')),
+    new InvoiceField()
+      .setKey('VALORTOTAL')
+      .setRegexExp(new RegExp('(\\W|^)(TOTALR(S|\\$)|TOTAL R(S|\\$)|R(S|\\$)TOTAL|VALORPAGO)(\\W|$)', 'i')),
   );
 
   for (let i = 0; i < readTexts.length; i++) {
@@ -45,6 +52,13 @@ const satService = async (readTexts: string[]): Promise<NotaFiscal> => {
             cnpj = accessKey.substring(6, 20);
           }
           notaFiscal.setCnpj(cnpj);
+        } else if (field.key.includes('VALORTOTAL')) {
+          if (!['DESCONTO', 'BRUTO', 'FEDERAL', 'ESTADUAL'].includes(text.toUpperCase())) {
+            const total = getValorTotalForNFCEOrSATOrECF(text, i, readTexts);
+            if (total && !total.startsWith('0')) {
+              notaFiscal.setValorTotal(total);
+            }
+          }
         } else if (field.key.includes('ENDERECO')) {
           notaFiscal.setEndereco(text);
         } else if (field.key.includes('NUMERONOTA')) {

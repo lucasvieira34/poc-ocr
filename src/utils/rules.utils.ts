@@ -17,6 +17,37 @@ export const applyCNPJMatcherRules = (text: string): string => {
   }
 };
 
+export const getValorTotalForNFCEOrSATOrECF = (text: string, i: number, readTexts: string[]): string => {
+  let total = getValorTotalByNextLineForNFCEOrSATOrECF(text, i, readTexts);
+
+  total = getValorTotal(total, text);
+
+  return total;
+};
+
+function getValorTotalByNextLineForNFCEOrSATOrECF(text: string, i: number, readTexts: string[]): string {
+  const nextIndex = i + 1;
+  if (text.endsWith('TOTAL') || text.endsWith('R$') || text.endsWith('VALORPAGO')) {
+    let total = readTexts[nextIndex];
+
+    if (!total.includes(',') && !total.includes('.')) {
+      total = total.replace(/ /g, '.');
+    } else {
+      if (total.includes(',') && total.includes('.')) {
+        total = total.replace(/ /g, '').replace('\\.', '').replace(/\,/g, '.');
+      } else if (total.includes(',') && !total.includes('.')) {
+        total = total.replace(/ /g, '').replace(/\,/g, '.');
+      } else if (!total.includes(',') && total.includes('.')) {
+        total = total.replace(/ /g, '');
+      }
+    }
+    if (!isNaN(+total)) {
+      return total;
+    }
+  }
+  return null;
+}
+
 export const getValorTotal = (total: string, text: string): string => {
   if (!total) {
     total = getValorTotalByRegex(text);

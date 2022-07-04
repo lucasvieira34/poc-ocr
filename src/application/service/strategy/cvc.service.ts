@@ -25,7 +25,7 @@ const cvcService = async (readTexts: string[]): Promise<NotaFiscal> => {
       if (pattern.test(text.toUpperCase())) {
         if (field.key.includes('DATAEMISSAO')) {
           if (i == readTexts.length - 1 || i == readTexts.length) {
-            const dataEmissao = pattern.exec(text)[0].concat(' 00:00:00');
+            const dataEmissao = text.concat(' 00:00:00');
             notaFiscal.setDataEmissao(dataEmissao);
           }
         } else if (field.key.includes('FORMAPAGAMENTO')) {

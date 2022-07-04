@@ -7,7 +7,7 @@ import { OcrAnalyzeResponse } from 'src/application/model/ocr/ocr-analyze-respon
 const logger = new Logger('OcrClient');
 
 const ocrApi = axios.create({
-  baseURL: process.env.BASE_URL,
+  baseURL: 'https://brmallsocr.cognitiveservices.azure.com/vision/v3.2',
   headers: {
     'Ocp-Apim-Subscription-Key': process.env.TOKEN,
   },
