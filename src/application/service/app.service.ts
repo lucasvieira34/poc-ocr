@@ -4,6 +4,7 @@ import { AnalyzeTexts } from '../model/analyze-texts.model';
 import { TypeInvoiceEnumeration } from '../model/enum/type-invoice.enum';
 import { InvoiceModel } from '../model/invoice.model';
 import { Line } from '../model/line.model';
+import { OcrAnalyzeResponse } from '../model/ocr/ocr-analyze-response.model';
 import { OcrImageResponse } from '../model/ocr/ocr-image-response.model';
 import { asyncOcr, getAnalyzeResultsByOcr, syncOcr } from './client/ocr.client';
 import InvoiceStrategy from './strategy.service';
@@ -49,10 +50,7 @@ export class AppService {
 
     let ocrAnalyzeResponse = await getAnalyzeResultsByOcr(analyzeId);
 
-    if (ocrAnalyzeResponse.error) {
-      const ocrError = ocrAnalyzeResponse.error;
-      throw new HttpException(ocrError.message, HttpStatus.BAD_REQUEST);
-    }
+    if (ocrAnalyzeResponse.error) throwOcrError(ocrAnalyzeResponse);
 
     while ((!ocrAnalyzeResponse.status || ocrAnalyzeResponse.status === 'running') && tentativas <= 5) {
       this.logger.error(`Erro na ${tentativas} tentativa de leitura.`);
@@ -60,10 +58,7 @@ export class AppService {
       this.logger.log(`Executando tentativa: ${++tentativas}`);
       ocrAnalyzeResponse = await getAnalyzeResultsByOcr(analyzeId);
 
-      if (ocrAnalyzeResponse.error) {
-        const ocrError = ocrAnalyzeResponse.error;
-        throw new HttpException(ocrError.message, HttpStatus.BAD_REQUEST);
-      }
+      if (ocrAnalyzeResponse.error) throwOcrError(ocrAnalyzeResponse);
     }
 
     if (!ocrAnalyzeResponse.status || ocrAnalyzeResponse.status !== 'succeeded') {
@@ -132,6 +127,11 @@ export class AppService {
       .setType(typeInvoice ? typeInvoice : TypeInvoiceEnumeration.INDEFINIDO)
       .setInvoice(invoice);
   }
+}
+
+function throwOcrError(ocrAnalyzeResponse: OcrAnalyzeResponse) {
+  const ocrError = ocrAnalyzeResponse.error;
+  throw new HttpException(ocrError.message, HttpStatus.BAD_REQUEST);
 }
 
 function addLine(newLine: Line, linesMap: Map<number, Line>): Map<number, Line> {
