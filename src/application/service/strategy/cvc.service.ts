@@ -17,12 +17,9 @@ const cvcService = async (readTexts: string[]): Promise<NotaFiscal> => {
     new InvoiceField().setKey('VALORTOTAL').setRegexExp(new RegExp('(totalizam o valor de R\\$)', 'i')),
   );
 
-  // let matchersMap = new Map<string, string[]>();
-
   for (let i = 0; i < readTexts.length; i++) {
     let text = readTexts[i];
 
-    //ITERAR FIELDS
     fields.forEach((field) => {
       const pattern = field.regexExp;
       if (pattern.test(text.toUpperCase())) {
