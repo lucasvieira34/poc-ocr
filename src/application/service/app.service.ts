@@ -155,7 +155,7 @@ function addLine(newLine: Line, linesMap: Map<number, Line>): Map<number, Line> 
 }
 
 function equalsLine(boundingBox: number[], newBoundingBox: number[]): boolean {
-  for (let i = 0; i < boundingBox.length; i += 2) {
+  for (let i = 1; i < boundingBox.length; i += 2) {
     const result = boundingBox.at(i) - newBoundingBox.at(i);
     if (result < -10 || result > 10) {
       return false;
