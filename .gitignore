@@ -1,6 +1,7 @@
 # compiled output
 /dist
 /node_modules
+/src/application/service/client/ocr.client.ts
 
 # Logs
 logs
