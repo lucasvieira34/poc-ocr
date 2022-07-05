@@ -31,7 +31,7 @@ const satService = async (readTexts: string[]): Promise<NotaFiscal> => {
       .setRegexExp(new RegExp('(\\W|^)(EXTRATO|EXTRATO NO.|EXTRATO Nº)(\\W|$)', 'i')),
     new InvoiceField()
       .setKey('VALORTOTAL')
-      .setRegexExp(new RegExp('(\\W|^)(TOTALR(S|\\$)|TOTAL R(S|\\$)|R(S|\\$)TOTAL|VALORPAGO)(\\W|$)', 'i')),
+      .setRegexExp(new RegExp('(\\W|^)(TOTALR(S|\\$)|TOTAL R(S|\\$)|R(S|\\$)TOTAL|VALORPAGO|VALOR PAGO)(\\W|$)', 'i')),
   );
 
   for (let i = 0; i < readTexts.length; i++) {
@@ -44,7 +44,7 @@ const satService = async (readTexts: string[]): Promise<NotaFiscal> => {
         if (field.key.includes('ACCESSKEY')) {
           if (!accessKey) {
             accessKey = getAcessKeyByLines(text, i, readTexts);
-            notaFiscal.setAccessKey(accessKey);
+            if (accessKey.length === 44) notaFiscal.setAccessKey(accessKey);
           }
         } else if (field.key.includes('DATAEMISSAO')) {
           const dataEmissao = applyDataEmissaoMatcherRules(text);
@@ -57,7 +57,7 @@ const satService = async (readTexts: string[]): Promise<NotaFiscal> => {
           notaFiscal.setCnpj(cnpj);
         } else if (field.key.includes('VALORTOTAL')) {
           if (!['DESCONTO', 'BRUTO', 'FEDERAL', 'ESTADUAL'].includes(text.toUpperCase())) {
-            const total = getValorTotalForNFCEOrSATOrECF(text, i, readTexts);
+            const total = getValorTotalForNFCEOrSATOrECF(text.toUpperCase(), i, readTexts);
             if (total && !total.startsWith('0')) {
               notaFiscal.setValorTotal(total);
             }

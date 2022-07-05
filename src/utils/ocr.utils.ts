@@ -30,6 +30,8 @@ export const getPaymentMethodByKey = (text: string): PaymentMethod => {
       return PaymentMethod.CREDITO;
     case text.includes('CREDITO'):
       return PaymentMethod.CREDITO;
+    case text.includes('AMERICAN'):
+      return PaymentMethod.CREDITO;
     case text.includes('DÉBITO'):
       return PaymentMethod.DEBITO;
     case text.includes('DEBITO'):

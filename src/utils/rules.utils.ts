@@ -5,6 +5,9 @@ export const applyDataEmissaoMatcherRules = (text: string): string => {
   if (text.length === 16) {
     text = text.concat(':00');
   }
+  if (text.length != 19 && text.includes('-')) {
+    text = text.replace('- ', '');
+  }
   if (text.length != 19) {
     return null;
   }
@@ -23,7 +26,7 @@ export const applyCNPJMatcherRules = (text: string): string => {
 export const applyFormaPagamentoMatcherRules = (text: string): string => {
   const contentValues = text
     .toUpperCase()
-    .replace('[^(?i)(W|^)(CRÉDITO|CREDITO|DÉBITO|DEBITO|DINHEIRO)(W|$)]', '')
+    .replace('[^(?i)(W|^)(CRÉDITO|CREDITO|DÉBITO|DEBITO|DINHEIRO|AMERICAN)(W|$)]', '')
     .replace(':', '')
     .split(' ');
 
@@ -39,8 +42,12 @@ export const applyFormaPagamentoMatcherRules = (text: string): string => {
 export const getValorTotalForNFCEOrSATOrECF = (text: string, i: number, readTexts: string[]): string => {
   let total: string;
   const nextIndex = i + 1;
-  if (text.endsWith('TOTAL') || text.endsWith('R$') || text.endsWith('VALORPAGO')) {
-    total = readTexts[nextIndex];
+  if (text.endsWith('TOTAL') || text.endsWith('R$') || text.endsWith('VALORPAGO') || text.endsWith('PAGO')) {
+    total = readTexts[nextIndex].replace(/[^\d|.,-/ /]/g, '');
+
+    if (total.includes('-')) {
+      total = readTexts[nextIndex + 1];
+    }
 
     if (!total.includes(',') && !total.includes('.')) {
       total = total.replace(/ /g, '.');

@@ -23,5 +23,5 @@ export const getEnderecoInvoiceField = () => {
 export const getFormaPagamentoInvoiceField = () => {
   return new InvoiceField()
     .setKey('FORMAPAGAMENTO')
-    .setRegexExp(new RegExp('(\\W|^)(CRÉDITO|CREDITO|DÉBITO|DEBITO|DINHEIRO)(\\W|$)', 'i'));
+    .setRegexExp(new RegExp('(\\W|^)(CRÉDITO|CREDITO|DÉBITO|DEBITO|DINHEIRO|AMERICAN)(\\W|$)', 'i'));
 };
