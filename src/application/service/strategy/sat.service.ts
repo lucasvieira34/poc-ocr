@@ -5,10 +5,12 @@ import {
   getCnpjFornecedorInvoiceField,
   getDataEmissaoWithDateFormatInvoiceField,
   getEnderecoInvoiceField,
+  getFormaPagamentoInvoiceField,
 } from 'src/utils/pattern.utils';
 import {
   applyCNPJMatcherRules,
   applyDataEmissaoMatcherRules,
+  applyFormaPagamentoMatcherRules,
   getValorTotalForNFCEOrSATOrECF,
 } from 'src/utils/rules.utils';
 
@@ -23,6 +25,7 @@ const satService = async (readTexts: string[]): Promise<NotaFiscal> => {
     getCnpjFornecedorInvoiceField(),
     getDataEmissaoWithDateFormatInvoiceField(),
     getEnderecoInvoiceField(),
+    getFormaPagamentoInvoiceField(),
     new InvoiceField()
       .setKey('NUMERONOTA')
       .setRegexExp(new RegExp('(\\W|^)(EXTRATO|EXTRATO NO.|EXTRATO Nº)(\\W|$)', 'i')),
@@ -64,6 +67,9 @@ const satService = async (readTexts: string[]): Promise<NotaFiscal> => {
         } else if (field.key.includes('NUMERONOTA')) {
           const numeroNota = text.replace(/[^\d]/g, '').replace(/ /g, '');
           if (!isNaN(+numeroNota)) notaFiscal.setNumeroNota(numeroNota);
+        } else if (field.key.includes('FORMAPAGAMENTO')) {
+          const formaPagamento = applyFormaPagamentoMatcherRules(text);
+          if (formaPagamento) notaFiscal.setFormaPagamento(formaPagamento);
         }
       }
     });

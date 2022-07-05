@@ -19,3 +19,9 @@ export const getEnderecoInvoiceField = () => {
     .setKey('ENDERECO')
     .setRegexExp(new RegExp('(\\W|^)(RUA|R\\.|AVENIDA|AV\\.|AVN|TRAVESSA|TRAV\\.)(\\W|$)', 'i'));
 };
+
+export const getFormaPagamentoInvoiceField = () => {
+  return new InvoiceField()
+    .setKey('FORMAPAGAMENTO')
+    .setRegexExp(new RegExp('(\\W|^)(CRÉDITO|CREDITO|DÉBITO|DEBITO|DINHEIRO)(\\W|$)', 'i'));
+};

@@ -1,3 +1,4 @@
+import { PaymentMethod } from 'src/application/model/enum/tipo-pagamento.enum';
 import { TypeInvoiceEnumeration } from 'src/application/model/enum/type-invoice.enum';
 
 export const getTypeInvoiceByKey = (text: string): TypeInvoiceEnumeration => {
@@ -20,5 +21,22 @@ export const getTypeInvoiceByKey = (text: string): TypeInvoiceEnumeration => {
       return TypeInvoiceEnumeration.CONTRATO_CVC;
     default:
       return TypeInvoiceEnumeration.INDEFINIDO;
+  }
+};
+
+export const getPaymentMethodByKey = (text: string): PaymentMethod => {
+  switch (true) {
+    case text.includes('CRÉDITO'):
+      return PaymentMethod.CREDITO;
+    case text.includes('CREDITO'):
+      return PaymentMethod.CREDITO;
+    case text.includes('DÉBITO'):
+      return PaymentMethod.DEBITO;
+    case text.includes('DEBITO'):
+      return PaymentMethod.DEBITO;
+    case text.includes('DINHEIRO'):
+      return PaymentMethod.DINHEIRO;
+    default:
+      return PaymentMethod.INDEFINIDO;
   }
 };

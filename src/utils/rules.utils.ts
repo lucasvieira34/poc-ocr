@@ -1,3 +1,6 @@
+import { PaymentMethod } from 'src/application/model/enum/tipo-pagamento.enum';
+import { getPaymentMethodByKey } from './ocr.utils';
+
 export const applyDataEmissaoMatcherRules = (text: string): string => {
   if (text.length === 16) {
     text = text.concat(':00');
@@ -17,18 +20,27 @@ export const applyCNPJMatcherRules = (text: string): string => {
   }
 };
 
-export const getValorTotalForNFCEOrSATOrECF = (text: string, i: number, readTexts: string[]): string => {
-  let total = getValorTotalByNextLineForNFCEOrSATOrECF(text, i, readTexts);
+export const applyFormaPagamentoMatcherRules = (text: string): string => {
+  const contentValues = text
+    .toUpperCase()
+    .replace('[^(?i)(W|^)(CRÉDITO|CREDITO|DÉBITO|DEBITO|DINHEIRO)(W|$)]', '')
+    .replace(':', '')
+    .split(' ');
 
-  total = getValorTotal(total, text);
+  text = contentValues
+    .map((value) => getPaymentMethodByKey(value))
+    .filter((method) => method != PaymentMethod.INDEFINIDO)
+    .reverse()
+    .pop();
 
-  return total;
+  if (text) return text;
 };
 
-function getValorTotalByNextLineForNFCEOrSATOrECF(text: string, i: number, readTexts: string[]): string {
+export const getValorTotalForNFCEOrSATOrECF = (text: string, i: number, readTexts: string[]): string => {
+  let total: string;
   const nextIndex = i + 1;
   if (text.endsWith('TOTAL') || text.endsWith('R$') || text.endsWith('VALORPAGO')) {
-    let total = readTexts[nextIndex];
+    total = readTexts[nextIndex];
 
     if (!total.includes(',') && !total.includes('.')) {
       total = total.replace(/ /g, '.');
@@ -41,12 +53,12 @@ function getValorTotalByNextLineForNFCEOrSATOrECF(text: string, i: number, readT
         total = total.replace(/ /g, '');
       }
     }
-    if (!isNaN(+total)) {
-      return total;
+    if (isNaN(+total)) {
+      total = null;
     }
   }
-  return null;
-}
+  return getValorTotal(total, text);
+};
 
 export const getValorTotal = (total: string, text: string): string => {
   if (!total) {
